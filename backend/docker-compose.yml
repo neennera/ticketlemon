@@ -1,9 +1,9 @@
 version: "3.9"
 services:
-  app:
+  ticketlemon_app:
     build: .
     ports:
-      - "3000:3000"
+      - "80:80"
     environment:
       - DB_HOST=db
       - DB_USER=root
@@ -15,7 +15,7 @@ services:
       - redis
     volumes:
       - .:/app
-  db:
+  ticketlemon_db:
     image: mysql:8
     restart: always
     environment:
@@ -23,7 +23,7 @@ services:
       MYSQL_ROOT_PASSWORD: root
     ports:
       - "3306:3306"
-  redis:
+  ticketlemon_redis:
     image: redis:alpine
     ports:
       - "6379:6379"
