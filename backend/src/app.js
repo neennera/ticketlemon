@@ -44,6 +44,10 @@ app.use("/admin", adminRoute);
 const initDBRoute = require("./initDB");
 app.use("/initDB", initDBRoute);
 
+// applyTicket routes
+const applyTicketRoute = require("./applyTicket");
+app.use("/applyTicket", applyTicketRoute);
+
 app.get("/", (req, res) => {
   res.send("Welcome to TicketLemon! Ya");
 });

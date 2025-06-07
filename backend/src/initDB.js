@@ -18,7 +18,7 @@ router.get("/reset", async (req, res) => {
   // Create CUSTOMERS table
   await conn.query(`
       CREATE TABLE CUSTOMERS (
-        customerId CHAR(36) PRIMARY KEY,
+        customerId CHAR(8) PRIMARY KEY,
         customerName VARCHAR(255),
         customerAge INT,
         customerGender ENUM('Male', 'Female', 'LGBT+')

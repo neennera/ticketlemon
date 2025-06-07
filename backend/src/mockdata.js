@@ -1,19 +1,19 @@
 module.exports = {
   customers: [
     {
-      customerId: "11111111-1111-1111-1111-111111111111",
+      customerId: "CUS00001",
       customerName: "Alice Smith",
       customerAge: 28,
       customerGender: "Female",
     },
     {
-      customerId: "22222222-2222-2222-2222-222222222222",
+      customerId: "CUS00003",
       customerName: "Bob Johnson",
       customerAge: 35,
       customerGender: "Male",
     },
     {
-      customerId: "33333333-3333-3333-3333-333333333333",
+      customerId: "CUS00003",
       customerName: "Charlie Lee",
       customerAge: 22,
       customerGender: "LGBT+",

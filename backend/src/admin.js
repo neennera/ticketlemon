@@ -42,6 +42,7 @@ router.get("/tickets", async (req, res) => {
   }
 });
 
+// ---------- GET TICKETS BY STATUS ----------
 router.get("/tickets/status/:status", async (req, res) => {
   try {
     const conn = getConn();
