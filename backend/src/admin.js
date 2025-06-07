@@ -65,20 +65,4 @@ router.get("/tickets/status/:status", async (req, res) => {
 
 // login admin & auth
 
-// grant
-
-router.post("ticket/grant/:reserveId", (req, res) => {
-  // check admin role from back office
-  // grant the ticket for reserveId
-  // make an ticket from (ticketbody)
-  // send email to userId
-  // make FREE_TICKETS_APPLY for reserveId to true
-  // if FREE is done in 200 seat -> all of other is reject !
-});
-
-router.post("ticket/grant/:reserveId", (req, res) => {
-  // check admin role from back office
-  // grant the ticket for reserveId
-});
-
 module.exports = router;

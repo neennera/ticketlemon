@@ -4,6 +4,8 @@ const { getConn } = require("./app");
 
 module.exports = router;
 
+// nextTODO : send email to user
+
 router.patch("/buy", async (req, res) => {
   try {
     const conn = await getConn();
