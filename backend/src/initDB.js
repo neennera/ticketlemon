@@ -7,7 +7,7 @@ module.exports = router;
 
 // TODO : auth admin token
 
-router.get("/reset", async (req, res) => {
+router.post("/reset", async (req, res) => {
   const conn = getConn();
   // drop existing table
   await conn.query("DROP TABLE IF EXISTS TICKETS_APPLY_BUY");
@@ -21,7 +21,8 @@ router.get("/reset", async (req, res) => {
         customerId CHAR(8) PRIMARY KEY,
         customerName VARCHAR(255),
         customerAge INT,
-        customerGender ENUM('Male', 'Female', 'LGBT+')
+        customerGender ENUM('Male', 'Female', 'LGBT+'),
+        customerSecurityNumber VARCHAR(8) UNIQUE
       )
     `);
 
@@ -33,7 +34,7 @@ router.get("/reset", async (req, res) => {
         zone ENUM('FREE','BUY'),
         seat CHAR(3),
         status ENUM('PROCESS', 'SUCCESS', 'FAIL'),
-        customerId CHAR(36),
+        customerId CHAR(8),
         updateTime DATETIME,
         FOREIGN KEY (customerId) REFERENCES CUSTOMERS(customerId)
       )

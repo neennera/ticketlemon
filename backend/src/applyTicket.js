@@ -37,16 +37,39 @@ router.post("/free", async (req, res) => {
     // redis TODO (no need to implement now): create new reserveId, then remember the questions
     const conn = await getConn();
     const { customer, questions } = req.body;
+
+    if (
+      !customer.customerName ||
+      !customer.customerAge ||
+      !customer.customerGender ||
+      !customer.customerSecurityNumber ||
+      !questions.Q1 ||
+      !questions.Q2 ||
+      !questions.Q3
+    )
+      throw new Error("Not enoug required field");
+
+    // Check Duplicate Customer -----------
+    const [DupCustomer] = await conn.query(
+      "SELECT customerId FROM CUSTOMERS WHERE customerSecurityNumber = ?",
+      [customer.customerSecurityNumber]
+    );
+    console.log(DupCustomer);
+
+    if (DupCustomer.length > 0)
+      throw new Error("Duplicate customerSecurityNumber");
+
     const { ticketUUID, ticketId, customerId } = await getNewId();
 
     // INSERT DATA TO DB ----------
     await conn.query(
-      "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender) VALUES (?, ?, ?, ?)",
+      "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender,customerSecurityNumber) VALUES (?, ?, ?, ?,?)",
       [
         customerId,
         customer.customerName,
         customer.customerAge,
         customer.customerGender,
+        customer.customerSecurityNumber,
       ]
     );
     await conn.query(
