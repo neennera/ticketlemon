@@ -78,7 +78,7 @@ router.patch("/free/updateFail", async (req, res) => {
   try {
     const conn = await getConn();
     await conn.query(
-      "UPDATE TICKETS SET status = 'FAIL' WHERE status = 'PROCESS' AND zone = 'FREE"
+      "UPDATE TICKETS SET status = 'FAIL' WHERE status = 'PROCESS' AND zone = 'FREE'"
     );
     res.send("success");
   } catch (error) {
