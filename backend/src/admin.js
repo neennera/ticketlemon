@@ -1,21 +1,50 @@
 const express = require("express");
 const router = express.Router();
+const { getConn } = require("./app");
 
-router.get("/", (req, res) => {
-  res.send("Admin dashboard");
+router.get("/", async (req, res) => {
+  try {
+    const conn = getConn();
+    const result = await conn.query("SELECT * FROM TICKETSs");
+    if (!result) throw new Error("result is not defined");
+
+    res.json({ data: result[0] });
+  } catch (error) {
+    if (!result) res.status(500).json({ error });
+  }
 });
 
 // query all tickets
-router.get("/tickets/all", (req, res) => {
-  res.send("All ticket");
+router.get("/tickets/all", async (req, res) => {
+  try {
+    const conn = getConn();
+    const result = await conn.query("SELECT * FROM TICKETS");
+    if (!result) throw new Error("result is not defined");
+
+    res.json({ data: result[0] });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 });
 
-router.get("/tickets/success", (req, res) => {
-  res.send("SUCCESS ticket");
-});
+router.get("/tickets/status/:status", async (req, res) => {
+  try {
+    const conn = getConn();
+    const { status } = req.params;
+    if (!["PROCESS", "SUCCESS", "FAIL"].includes(status))
+      throw new Error("status is not valid enum");
 
-router.get("/tickets/apply", (req, res) => {
-  res.send("FREE apply tickets");
+    const result = await conn.query("SELECT * FROM TICKETS WHERE status = ?", [
+      status,
+    ]);
+    if (!result) throw new Error("result is not defined");
+
+    res.json({ data: result[0] });
+  } catch (error) {
+    console.log(error);
+
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // login admin & auth

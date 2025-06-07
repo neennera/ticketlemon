@@ -9,9 +9,6 @@ module.exports = router;
 
 router.get("/reset", async (req, res) => {
   const conn = getConn();
-  if (!conn) {
-    return res.status(500).json({ error: "Database not connected" });
-  }
   // drop existing table
   await conn.query("DROP TABLE IF EXISTS TICKETS_APPLY_BUY");
   await conn.query("DROP TABLE IF EXISTS TICKETS_APPLY_FREE");

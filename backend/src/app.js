@@ -26,7 +26,15 @@ if (require.main === module) {
   });
 }
 
-module.exports = { app, getConn: () => conn };
+module.exports = {
+  app,
+  getConn: () => {
+    if (!conn) {
+      return res.status(500).json({ error: "Database not connected" });
+    }
+    return conn;
+  },
+};
 
 // admin routes
 const adminRoute = require("./admin");
