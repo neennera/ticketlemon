@@ -14,11 +14,26 @@ router.get("/", async (req, res) => {
   }
 });
 
-// query all tickets
-router.get("/tickets/all", async (req, res) => {
+// ---------- GET TICKETS ----------
+router.get("/tickets", async (req, res) => {
   try {
     const conn = getConn();
-    const result = await conn.query("SELECT * FROM TICKETS");
+
+    // using pagify for all tickets
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    // Get total count for pagination info
+    const [countRows] = await conn.query(
+      "SELECT COUNT(*) as count FROM TICKETS"
+    );
+    const total = countRows[0].count;
+
+    const result = await conn.query("SELECT * FROM TICKETS  LIMIT ? OFFSET ?", [
+      limit,
+      offset,
+    ]);
     if (!result) throw new Error("result is not defined");
 
     res.json({ data: result[0] });
