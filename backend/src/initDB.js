@@ -44,7 +44,7 @@ router.post("/reset", async (req, res) => {
   await conn.query(`
       CREATE TABLE TICKETS_APPLY_BUY (
         ticketUUID CHAR(36),
-        paymentPlatform ENUM('QRCODE', 'DIRECT', 'PAYPLAT'),
+        paymentPlatform ENUM('QRCODE', 'DIRECT', 'PAYPLAT', 'NONE'),
         paymentReference VARCHAR(255),
         PRIMARY KEY (ticketUUID),
         FOREIGN KEY (ticketUUID) REFERENCES TICKETS(ticketUUID)
