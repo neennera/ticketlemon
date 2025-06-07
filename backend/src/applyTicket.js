@@ -43,7 +43,8 @@ router.post("/buy", async (req, res) => {
     // get new Id --------
     const { ticketUUID, ticketId, customerId } = await getNewId(
       customer.customerSecurityNumber,
-      false
+      false,
+      seatNumber
     );
 
     // INSERT DATA TO DB ----------
@@ -80,42 +81,7 @@ router.post("/buy", async (req, res) => {
   }
 });
 
-router.patch("/buy", async (req, res) => {
-  try {
-    const conn = await getConn();
-    const { ticketUUID, paymentPlatform, paymentReference } = req.body;
-    if (!paymentPlatform || !paymentReference || !ticketUUID)
-      throw new Error("Missing required field");
-
-    // check paymentPlatform ----
-    if (!["QRCODE", "DIRECT", "PAYPLAT"].includes(paymentPlatform))
-      throw new Error("Invalid paymentPlatform");
-
-    // nextTODO : check payment from something? -> on test should be correct 80%, 20%. I dunno?
-
-    // check ticketUUID ---------
-    const resQuery = await conn.query(
-      "SELECT * FROM TICKETS WHERE ticketUUID = ? AND zone = 'BUY'",
-      [ticketUUID]
-    );
-    if (resQuery[0].length == 0) throw new Error("Invalid ticketUUID ");
-
-    await conn.query(
-      "UPDATE TICKETS_APPLY_BUY SET paymentPlatform = ?, paymentReference = ? WHERE ticketUUID = ? ",
-      [paymentPlatform, paymentReference, ticketUUID]
-    );
-    await conn.query(
-      "UPDATE TICKETS SET status = 'SUCCESS' WHERE ticketUUID = ?",
-      [ticketUUID]
-    );
-    res.send("success");
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
-
 // -------------- FREE TICKET ---------------
-
 router.post("/free", async (req, res) => {
   try {
     // redisTODO (no need to implement now): create new reserveId, then remember the questions
@@ -163,8 +129,20 @@ router.post("/free", async (req, res) => {
   }
 });
 
-const getNewId = async (customerSecurityNumber, isFree = true) => {
+const getNewId = async (
+  customerSecurityNumber,
+  isFree = true,
+  seatNumber = ""
+) => {
   const conn = await getConn();
+
+  // Check Duplicate Seat -----------
+  if (!isFree) {
+    const [DupSeat] = await conn.query("SELECT * FROM TICKETS WHERE seat = ?", [
+      [seatNumber],
+    ]);
+    if (DupSeat.length > 0) throw new Error("Duplicate seatNumber");
+  }
 
   // Check Duplicate Customer -----------
   const [DupCustomer] = await conn.query(
