@@ -5,7 +5,24 @@ const { getConn } = require("./app");
 router.get("/", async (req, res) => {
   try {
     const conn = getConn();
-    const result = await conn.query("SELECT * FROM TICKETSs");
+    const result = await conn.query("SELECT COUNT(*) FROM TICKETS ");
+    if (!result) throw new Error("result is not defined");
+
+    res.json({ data: result[0] });
+  } catch (error) {
+    if (!result) res.status(500).json({ error });
+  }
+});
+
+router.get("/ticket/:ticketId", async (req, res) => {
+  try {
+    const conn = getConn();
+    const { ticketId } = req.params;
+
+    const result = await conn.query(
+      "SELECT * FROM TICKETS JOIN TICKETS_APPLY_FREE ON TICKETS.ticketUUID = TICKETS_APPLY_FREE.ticketUUID WHERE TICKETS.ticketId = ?",
+      [ticketId]
+    );
     if (!result) throw new Error("result is not defined");
 
     res.json({ data: result[0] });
@@ -36,7 +53,7 @@ router.get("/tickets", async (req, res) => {
     ]);
     if (!result) throw new Error("result is not defined");
 
-    res.json({ data: result[0] });
+    res.json({ data: result[0], total });
   } catch (error) {
     res.status(500).json({ error });
   }

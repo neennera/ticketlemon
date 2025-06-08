@@ -54,7 +54,7 @@ export default function Home() {
     <div className="w-full space-y-10 relative bg-gray-200 flex flex-col items-center justify-items-center min-h-screen px-8 pb-20 py-30 sm:px-20 font-[family-name:var(--font-geist-sans)]">
       {showPopup && completePopup()}
       <Header />
-      <div className="text-4xl font-bold">Buy the ticket🍋</div>
+      <div className="text-4xl font-bold">Complete Payment</div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
