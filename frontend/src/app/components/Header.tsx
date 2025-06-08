@@ -4,8 +4,12 @@ export default function Header() {
       <a href="/buy" className="py-2 px-10 font-bold hover:bg-yellow-500">
         buy ticket
       </a>
+
       <a href="/free" className="py-2 px-10 font-bold hover:bg-yellow-500">
         free ticket
+      </a>
+      <a href="/payment" className="py-2 px-10 font-bold hover:bg-yellow-500">
+        payment
       </a>
       <a href="/admin" className="py-2 px-10 font-bold hover:bg-yellow-500">
         admin

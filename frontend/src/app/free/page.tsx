@@ -110,7 +110,7 @@ export default function Home() {
             <option value="">Select gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option value="LGBT+">LGBT+</option>
           </select>
           {errors.customerGender && (
             <p className="mt-1 p-2 text-sm text-red-600">

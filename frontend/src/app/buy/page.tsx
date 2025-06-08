@@ -14,9 +14,29 @@ const formSchema = z.object({
     .regex(/^[0-9]{8}$/, "Security number must be 8 digits"),
 });
 
+const ticketIdPopup = ({ ticketId }: { ticketId: string }) => {
+  return (
+    <div className="fixed  flex-col space-y-5 top-0 left-0 w-full h-full bg-black/92 bg-opacity-50 flex items-center justify-center">
+      <p className="text-4xl text-white">Your Ticker ID is</p>
+      <p className="text-4xl font-bold text-white my-10">{ticketId}</p>
+      <p className="text-xl text-white">
+        please <strong className="text-yellow-500">copy & remember</strong> this
+        number
+      </p>
+      <p className="text-xl text-white">
+        please use this ID to complete your payment
+      </p>
+      <a href="/payment" className="bg-yellow-500 py-2 px-8 mt-3">
+        Go To Payment Page
+      </a>
+    </div>
+  );
+};
+
 export default function Home() {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [seatError, setSeatError] = useState<boolean>(false);
+  const [showPopup, setShowPopup] = useState<boolean>(false);
   const [seated] = useState<boolean[]>([
     false,
     false,
@@ -83,11 +103,13 @@ export default function Home() {
 
     console.log(customer);
     // use Axios to send data to backend
+    setShowPopup(true);
   };
 
   return (
-    <div className="w-full space-y-10 relative bg-gray-200 flex flex-col items-center justify-items-center min-h-screen px-8 pb-20  py-30 sm:px-20 font-[family-name:var(--font-geist-sans)]">
+    <div className="w-full space-y-10 relative bg-gray-200 flex flex-col items-center justify-items-center min-h-screen px-8 pb-20 py-30 sm:px-20 font-[family-name:var(--font-geist-sans)]">
       <Header />
+      {showPopup && ticketIdPopup({ ticketId: "1234567890" })}
       <div className="text-4xl font-bold">Buy the ticket🍋</div>
 
       <form
@@ -163,7 +185,7 @@ export default function Home() {
             <option value="">Select gender</option>
             <option value="male">Male</option>
             <option value="female">Female</option>
-            <option value="other">Other</option>
+            <option value="LGBT+">LGBT+</option>
           </select>
           {errors.customerGender && (
             <p className="mt-1 p-2 text-sm text-red-600">
