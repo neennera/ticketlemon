@@ -46,8 +46,6 @@ router.patch("/free", async (req, res) => {
     const { ticketUUID, status } = req.body;
     if (!ticketUUID || !status) throw new Error("Missing required field");
 
-    console.log(ticketUUID, status);
-
     // check ticketUUID ---------
     const resQuery = await conn.query(
       "SELECT * FROM TICKETS WHERE ticketUUID = ? AND zone = 'FREE'",
