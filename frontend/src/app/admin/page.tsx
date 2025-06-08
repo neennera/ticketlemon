@@ -5,7 +5,8 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 
 interface Ticket {
-  id: number;
+  ticketUUID: string;
+  ticketId: string;
   customerName: string;
   customerAge: number;
   customerGender: string;
@@ -29,10 +30,11 @@ export default function Home() {
     try {
       const url =
         status === "ALL"
-          ? `http://localhost:3001/admin/tickets?page=${page}&limit=10`
-          : `http://localhost:3001/admin/tickets/status/${status}?page=${page}&limit=10`;
+          ? `http://localhost:80/admin/tickets?page=${page}&limit=10`
+          : `http://localhost:80/admin/tickets/status/${status}?page=${page}&limit=10`;
 
       const response = await axios.get(url);
+
       setTickets(response.data.data);
       setTotalPages(Math.ceil(response.data.total / 10));
     } catch (error) {
@@ -54,11 +56,12 @@ export default function Home() {
   };
 
   const handleStatusUpdate = async (
-    ticketId: number,
+    ticketUUID: string,
     newStatus: "SUCCESS" | "FAIL"
   ) => {
     try {
-      await axios.patch(`http://localhost:3001/admin/tickets/${ticketId}`, {
+      await axios.patch(`http://localhost:80/updateTicket/free`, {
+        ticketUUID: ticketUUID,
         status: newStatus,
       });
       fetchTickets(currentPage, selectedStatus);
@@ -129,13 +132,7 @@ export default function Home() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Name
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Age
-                    </th>
-                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                      Gender
+                      ticket ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
@@ -147,15 +144,9 @@ export default function Home() {
                 </thead>
                 <tbody className="bg-white divide-y divide-gray-200">
                   {tickets.map((ticket) => (
-                    <tr key={ticket.id}>
+                    <tr key={ticket.ticketUUID}>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {ticket.customerName}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {ticket.customerAge}
-                      </td>
-                      <td className="px-6 py-4 whitespace-nowrap">
-                        {ticket.customerGender}
+                        {ticket.ticketId}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
@@ -171,26 +162,36 @@ export default function Home() {
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {ticket.status === "PROCESS" && (
-                          <div className="space-x-2">
-                            <button
-                              onClick={() =>
-                                handleStatusUpdate(ticket.id, "SUCCESS")
-                              }
-                              className="px-3 py-1 bg-green-600 text-white rounded-md hover:bg-green-700"
-                            >
-                              Approve
-                            </button>
-                            <button
-                              onClick={() =>
-                                handleStatusUpdate(ticket.id, "FAIL")
-                              }
-                              className="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700"
-                            >
-                              Reject
-                            </button>
-                          </div>
-                        )}
+                        {ticket.status === "PROCESS" &&
+                          ticket.ticketId.includes("TF") && (
+                            <div className="space-x-2">
+                              <button
+                                onClick={() =>
+                                  handleStatusUpdate(
+                                    ticket.ticketUUID,
+                                    "SUCCESS"
+                                  )
+                                }
+                                className="px-3 py-1 bg-green-600 cursor-pointer text-white rounded-md hover:bg-green-700"
+                              >
+                                Approve
+                              </button>
+                              <button
+                                onClick={() =>
+                                  handleStatusUpdate(ticket.ticketUUID, "FAIL")
+                                }
+                                className="px-3 py-1 cursor-pointer bg-red-600 text-white rounded-md hover:bg-red-700"
+                              >
+                                Reject
+                              </button>
+                            </div>
+                          )}
+                        {ticket.status === "PROCESS" &&
+                          ticket.ticketId.includes("TB") && (
+                            <p className="text-gray-500 italic">
+                              payment process
+                            </p>
+                          )}
                       </td>
                     </tr>
                   ))}

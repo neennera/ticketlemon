@@ -3,6 +3,17 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql2/promise");
 
+// install cors for cross origin resource sharing to frontend
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 let conn = null;
 

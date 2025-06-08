@@ -43,8 +43,10 @@ router.patch("/buy", async (req, res) => {
 router.patch("/free", async (req, res) => {
   try {
     const conn = await getConn();
-    const { ticketUUID } = req.body;
-    if (!ticketUUID) throw new Error("Missing required field");
+    const { ticketUUID, status } = req.body;
+    if (!ticketUUID || !status) throw new Error("Missing required field");
+
+    console.log(ticketUUID, status);
 
     // check ticketUUID ---------
     const resQuery = await conn.query(
@@ -52,6 +54,15 @@ router.patch("/free", async (req, res) => {
       [ticketUUID]
     );
     if (resQuery[0].length == 0) throw new Error("Invalid ticketUUID");
+
+    if (status === "FAIL") {
+      await conn.query(
+        "UPDATE TICKETS SET status = 'FAIL' WHERE ticketUUID = ?",
+        [ticketUUID]
+      );
+      res.send("success");
+      return;
+    }
 
     // get seat number -------
     let seatNumber = "F00";
