@@ -30,7 +30,7 @@ router.post("/reset", async (req, res) => {
   await conn.query(`
       CREATE TABLE TICKETS (
         ticketUUID CHAR(36) PRIMARY KEY,
-        ticketId VARCHAR(255),
+        ticketId VARCHAR(7),
         zone ENUM('FREE','BUY'),
         seat CHAR(3),
         status ENUM('PROCESS', 'SUCCESS', 'FAIL'),

@@ -9,8 +9,8 @@ module.exports = router;
 router.patch("/buy", async (req, res) => {
   try {
     const conn = await getConn();
-    const { ticketUUID, paymentPlatform, paymentReference } = req.body;
-    if (!paymentPlatform || !paymentReference || !ticketUUID)
+    const { ticketID, paymentPlatform, paymentReference } = req.body;
+    if (!paymentPlatform || !paymentReference || !ticketID)
       throw new Error("Missing required field");
 
     // check paymentPlatform ----
@@ -19,12 +19,14 @@ router.patch("/buy", async (req, res) => {
 
     // nextTODO : check payment from something? -> on test should be correct 80%, 20%. I dunno?
 
-    // check ticketUUID ---------
+    // check ticketID ---------
     const resQuery = await conn.query(
-      "SELECT * FROM TICKETS WHERE ticketUUID = ? AND zone = 'BUY'",
-      [ticketUUID]
+      "SELECT * FROM TICKETS WHERE ticketID = ? AND zone = 'BUY'",
+      [ticketID]
     );
-    if (resQuery[0].length == 0) throw new Error("Invalid ticketUUID");
+    if (resQuery[0].length == 0) throw new Error("Invalid ticketID");
+
+    const ticketUUID = await resQuery[0][0].ticketUUID;
 
     await conn.query(
       "UPDATE TICKETS_APPLY_BUY SET paymentPlatform = ?, paymentReference = ? WHERE ticketUUID = ? ",
@@ -43,8 +45,8 @@ router.patch("/buy", async (req, res) => {
 router.patch("/free", async (req, res) => {
   try {
     const conn = await getConn();
-    const { ticketUUID } = req.body;
-    if (!ticketUUID) throw new Error("Missing required field");
+    const { ticketUUID, status } = req.body;
+    if (!ticketUUID || !status) throw new Error("Missing required field");
 
     // check ticketUUID ---------
     const resQuery = await conn.query(
@@ -52,6 +54,15 @@ router.patch("/free", async (req, res) => {
       [ticketUUID]
     );
     if (resQuery[0].length == 0) throw new Error("Invalid ticketUUID");
+
+    if (status === "FAIL") {
+      await conn.query(
+        "UPDATE TICKETS SET status = 'FAIL' WHERE ticketUUID = ?",
+        [ticketUUID]
+      );
+      res.send("success");
+      return;
+    }
 
     // get seat number -------
     let seatNumber = "F00";

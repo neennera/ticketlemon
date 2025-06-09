@@ -3,6 +3,17 @@ const express = require("express");
 const app = express();
 const mysql = require("mysql2/promise");
 
+// install cors for cross origin resource sharing to frontend
+const cors = require("cors");
+
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PATCH", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 let conn = null;
 
@@ -54,6 +65,30 @@ app.use("/updateTicket", updateTicketRoute);
 
 app.get("/", (req, res) => {
   res.send("Welcome to TicketLemon!");
+});
+
+app.get("/ticket/:ticketId", async (req, res) => {
+  try {
+    const { ticketId } = req.params;
+
+    const result1 = await conn.query(
+      "SELECT * FROM TICKETS WHERE TICKETS.ticketId = ?",
+      [ticketId]
+    );
+
+    if (!result1) throw new Error("result is not defined");
+    if (result1[0][0].zone === "FREE") {
+      const result = await conn.query(
+        "SELECT * FROM TICKETS JOIN TICKETS_APPLY_FREE ON TICKETS.ticketUUID = TICKETS_APPLY_FREE.ticketUUID WHERE TICKETS.ticketId = ?",
+        [ticketId]
+      );
+      res.json({ data: result[0] });
+    } else {
+      res.json({ data: result1[0] });
+    }
+  } catch (error) {
+    res.status(500).json({ error });
+  }
 });
 
 app.use((req, res, next) => {
