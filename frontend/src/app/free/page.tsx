@@ -56,6 +56,7 @@ const ticketIdPopup = ({ ticketId }: { ticketId: string }) => {
 export default function Home() {
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [ticketId, setTicketId] = useState<string>("");
+  const [seatError, setSeatError] = useState<string>("");
 
   const {
     register,
@@ -91,12 +92,14 @@ export default function Home() {
         .then((response) => {
           setTicketId(response.data.data);
           setShowPopup(true);
+        })
+        .catch((error) => {
+          throw new Error(error.response.data.error);
         });
       setShowPopup(true);
-    } catch {
-      console.error("Error completing payment:");
+    } catch (error: unknown) {
+      setSeatError(error instanceof Error ? error.message : "error");
     }
-    // use Axios to send data to backend
   };
 
   return (
@@ -225,6 +228,7 @@ export default function Home() {
         >
           Submit
         </button>
+        <p className="mt-1 p-2 text-sm text-red-600">{seatError}</p>
       </form>
     </div>
   );

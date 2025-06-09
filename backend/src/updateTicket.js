@@ -33,8 +33,8 @@ router.patch("/buy", async (req, res) => {
       [paymentPlatform, paymentReference, ticketUUID]
     );
     await conn.query(
-      "UPDATE TICKETS SET status = 'SUCCESS' WHERE ticketUUID = ?",
-      [ticketUUID]
+      "UPDATE TICKETS SET updateTime = ?, status = 'SUCCESS' WHERE ticketUUID = ?",
+      [new Date(), ticketUUID]
     );
     res.send("success");
   } catch (error) {
@@ -57,8 +57,8 @@ router.patch("/free", async (req, res) => {
 
     if (status === "FAIL") {
       await conn.query(
-        "UPDATE TICKETS SET status = 'FAIL' WHERE ticketUUID = ?",
-        [ticketUUID]
+        "UPDATE TICKETS SET  updateTime = ?,status = 'FAIL' WHERE ticketUUID = ?",
+        [new Date(), ticketUUID]
       );
       res.send("success");
       return;

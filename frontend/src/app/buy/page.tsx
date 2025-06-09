@@ -1,6 +1,6 @@
 "use client";
 import Header from "@/app/components/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -36,32 +36,18 @@ const ticketIdPopup = ({ ticketId }: { ticketId: string }) => {
 
 export default function Home() {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
-  const [seatError, setSeatError] = useState<boolean>(false);
+  const [seatError, setSeatError] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [ticketId, setTicketId] = useState<string>("");
+  const [seated, setSeated] = useState<boolean[]>(Array(20).fill(false));
 
-  const [seated] = useState<boolean[]>([
-    false,
-    false,
-    false,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-    true,
-    true,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
+  useEffect(() => {
+    axios
+      .get(`${process.env.BACKEND_URL || "http://localhost:80"}/buyseatleft`)
+      .then((res) => {
+        setSeated(JSON.parse(res.data.data));
+      });
+  }, []);
 
   const Seat = ({ seatNumber }: { seatNumber: number }) => {
     return (
@@ -92,10 +78,9 @@ export default function Home() {
 
   const onSubmit = async (data: FormData) => {
     if (!selectedSeat) {
-      setSeatError(true);
+      setSeatError("please select seat");
       return;
     }
-    setSeatError(false);
 
     const customer = {
       customerName: data.customerName,
@@ -116,9 +101,13 @@ export default function Home() {
         .then((response) => {
           setTicketId(response.data.data);
           setShowPopup(true);
+        })
+        .catch((error) => {
+          throw new Error(error.response.data.error);
         });
-    } catch {
-      console.error("Error completing payment:");
+      setSeatError("");
+    } catch (error: unknown) {
+      setSeatError(error instanceof Error ? error.message : "error");
     }
   };
 
@@ -139,11 +128,8 @@ export default function Home() {
               <Seat key={i} seatNumber={i + 1} />
             ))}
           </div>
-          {seatError && (
-            <p className="mt-1 p-2 text-sm text-red-600">
-              please select a seat
-            </p>
-          )}
+
+          <p className="mt-1 p-2 text-sm text-red-600">{seatError}</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">
