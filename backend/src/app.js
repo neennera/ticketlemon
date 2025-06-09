@@ -106,6 +106,18 @@ app.get("/ticket/:ticketId", async (req, res) => {
   }
 });
 
+app.get("/buyseatleft", async (req, res) => {
+  try {
+    const result1 = await conn.query("SELECT * FROM TICKETS WHERE zone='BUY'", [
+      ticketId,
+    ]);
+
+    res.json({ data: result1[0] });
+  } catch (error) {
+    res.status(500).json({ error });
+  }
+});
+
 app.use((req, res, next) => {
   res.status(404).send("404 route not found");
 });

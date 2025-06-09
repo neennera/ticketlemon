@@ -1,6 +1,6 @@
 "use client";
 import Header from "@/app/components/Header";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -62,6 +62,8 @@ export default function Home() {
     false,
     false,
   ]);
+
+  useEffect(() => {}, []);
 
   const Seat = ({ seatNumber }: { seatNumber: number }) => {
     return (
