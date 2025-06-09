@@ -31,7 +31,7 @@ router.post("/buy", async (req, res) => {
 
     // REDIS : check if seat number avaliable with redis -----
     let cacheBuySeat = await redisConn.get("cacheBuySeat"); // bit string "00100..10" length 20 represent B01..B20
-    if (!cacheBuySeat || cacheBuySeat) {
+    if (!cacheBuySeat) {
       let seatBitMap = Array(20).fill(false);
 
       const buySeatRes = await conn.query(
@@ -46,7 +46,8 @@ router.post("/buy", async (req, res) => {
       redisConn.set("cacheBuySeat", cacheBuySeat);
     }
     const buySeat = JSON.parse(cacheBuySeat);
-    if (buySeat[parseInt(seatNumber.replace("B", "")) - 1])
+    const intSeatNumber = parseInt(seatNumber.replace("B", ""));
+    if (buySeat[intSeatNumber - 1])
       throw new Error("this Seat Number already booked");
 
     // get new Id --------
@@ -84,6 +85,9 @@ router.post("/buy", async (req, res) => {
       [ticketUUID, "NONE", null]
     );
 
+    seatBitMap[intSeatNumber - 1] = true;
+    cacheBuySeat = JSON.stringify(seatBitMap);
+    redisConn.set("cacheBuySeat", cacheBuySeat);
     res.json({ data: ticketId });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -146,7 +150,7 @@ const getNewId = async (
 ) => {
   const conn = await getConn();
 
-  // Check Duplicate Seat -----------
+  // Check Duplicate Seat (Again within DB for secure) -----------
   if (!isFree) {
     const [DupSeat] = await conn.query("SELECT * FROM TICKETS WHERE seat = ?", [
       [seatNumber],
