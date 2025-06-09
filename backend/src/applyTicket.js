@@ -9,7 +9,7 @@ module.exports = router;
 router.post("/buy", async (req, res) => {
   try {
     // redis : quickly mark seatReserve
-    // redis has 15 minutes reserve to complete payment -> if not
+    // redis has 15 minutes reserve to complete payment -> if not we must mark ticket.status to FAIL
 
     const conn = await getConn();
     const redisConn = await getRedisConn();
@@ -85,9 +85,16 @@ router.post("/buy", async (req, res) => {
       [ticketUUID, "NONE", null]
     );
 
+    // REDIS : update seatBitMap & schedule 15 minute timeout
     seatBitMap[intSeatNumber - 1] = true;
     cacheBuySeat = JSON.stringify(seatBitMap);
     redisConn.set("cacheBuySeat", cacheBuySeat);
+
+    await redisConn.set(`reservation:${ticketUUID}`, "PROCESS", {
+      // DEV check
+      EX: 10, // lifetime = 15 minutes in seconds
+    });
+
     res.json({ data: ticketId });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -137,6 +144,7 @@ router.post("/free", async (req, res) => {
       "INSERT INTO TICKETS_APPLY_FREE (ticketUUID, Q1, Q2, Q3) VALUES (?, ?, ?, ?)",
       [ticketUUID, questions.Q1, questions.Q2, questions.Q3]
     );
+
     res.json({ data: ticketId });
   } catch (error) {
     res.status(500).json({ error: error.message });
@@ -208,3 +216,39 @@ const getNewId = async (
     customerId: newCustomerId,
   };
 };
+
+// redis scheduler timeout for buy ticket reserved seat
+// It has built-in expiration functionality & fast for realtime
+async function checkExpiredReservations() {
+  const conn = await getConn();
+  const redisConn = await getRedisConn();
+  // Get all processing tickets
+  const [pendingTickets] = await conn.query(
+    "SELECT ticketUUID, seat FROM TICKETS WHERE status = 'PROCESS' AND zone = 'BUY'"
+  );
+
+  for (const ticket of pendingTickets) {
+    // Check if reservation still exists in Redis
+    const status = await redisConn.get(`reservation:${ticket.ticketUUID}`);
+
+    // if not = the reservation is expired
+    if (!status) {
+      // Update ticket status
+      await conn.query(
+        "UPDATE TICKETS SET status = 'FAIL', updateTime = ? WHERE ticketUUID = ?",
+        [new Date(), ticket.ticketUUID]
+      );
+
+      // Free up the seat in Redis
+      let cacheBuySeat = await redisConn.get("cacheBuySeat");
+      if (cacheBuySeat) {
+        const seatBitMap = JSON.parse(cacheBuySeat);
+        const seatNum = parseInt(ticket.seat.replace("B", ""));
+        seatBitMap[seatNum - 1] = false;
+        await redisConn.set("cacheBuySeat", JSON.stringify(seatBitMap));
+      }
+    }
+  }
+}
+// check every minute
+setInterval(checkExpiredReservations, 60000);
