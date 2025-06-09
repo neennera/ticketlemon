@@ -7,6 +7,8 @@ import axios from "axios";
 interface Ticket {
   ticketUUID: string;
   ticketId: string;
+  zone: string;
+  seat: string;
   customerName: string;
   customerAge: number;
   customerGender: string;
@@ -170,6 +172,12 @@ export default function Home() {
                       ticket ID
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Type
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                      Seat
+                    </th>
+                    <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                       Status
                     </th>
                     <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
@@ -182,6 +190,12 @@ export default function Home() {
                     <tr key={ticket.ticketUUID}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         {ticket.ticketId}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {ticket.zone}
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {ticket.seat === "F00" ? "-" : ticket.seat}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <span
