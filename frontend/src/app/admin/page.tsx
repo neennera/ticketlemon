@@ -77,9 +77,7 @@ export default function Home() {
   const handleViewAnswers = async (ticketId: string) => {
     try {
       const response = await axios.get(
-        `${
-          process.env.BACKEND_URL || "http://localhost:80"
-        }/admin/ticket/${ticketId}`
+        `${process.env.BACKEND_URL || "http://localhost:80"}/ticket/${ticketId}`
       );
       setSelectedTicket(response.data.data[0]);
       setIsModalOpen(true);

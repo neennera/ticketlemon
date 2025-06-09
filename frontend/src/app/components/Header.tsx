@@ -11,6 +11,9 @@ export default function Header() {
       <a href="/payment" className="py-2 px-10 font-bold hover:bg-yellow-500">
         payment
       </a>
+      <a href="/status" className="py-2 px-10 font-bold hover:bg-yellow-500">
+        check status
+      </a>
       <a href="/admin" className="py-2 px-10 font-bold hover:bg-yellow-500">
         admin
       </a>

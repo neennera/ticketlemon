@@ -14,23 +14,6 @@ router.get("/", async (req, res) => {
   }
 });
 
-router.get("/ticket/:ticketId", async (req, res) => {
-  try {
-    const conn = getConn();
-    const { ticketId } = req.params;
-
-    const result = await conn.query(
-      "SELECT * FROM TICKETS JOIN TICKETS_APPLY_FREE ON TICKETS.ticketUUID = TICKETS_APPLY_FREE.ticketUUID WHERE TICKETS.ticketId = ?",
-      [ticketId]
-    );
-    if (!result) throw new Error("result is not defined");
-
-    res.json({ data: result[0] });
-  } catch (error) {
-    if (!result) res.status(500).json({ error });
-  }
-});
-
 // ---------- GET TICKETS ----------
 router.get("/tickets", async (req, res) => {
   try {
