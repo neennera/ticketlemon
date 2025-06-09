@@ -75,6 +75,7 @@ app.use("/applyTicket", applyTicketRoute);
 
 // updateTicket routes
 const updateTicketRoute = require("./updateTicket");
+const getCacheBuySeat = require("./lib/getCacheBuySeat");
 app.use("/updateTicket", updateTicketRoute);
 
 app.get("/", (req, res) => {
@@ -108,11 +109,9 @@ app.get("/ticket/:ticketId", async (req, res) => {
 
 app.get("/buyseatleft", async (req, res) => {
   try {
-    const result1 = await conn.query("SELECT * FROM TICKETS WHERE zone='BUY'", [
-      ticketId,
-    ]);
+    const seatedBuy = await getCacheBuySeat();
 
-    res.json({ data: result1[0] });
+    res.json({ data: seatedBuy });
   } catch (error) {
     res.status(500).json({ error });
   }

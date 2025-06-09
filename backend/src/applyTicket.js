@@ -78,7 +78,7 @@ router.post("/buy", async (req, res) => {
 
     await redisConn.set(`reservation:${ticketUUID}`, "PROCESS", {
       // DEV check
-      EX: 10, // lifetime = 5 minutes in seconds
+      EX: 60, // lifetime = 5 minutes in seconds
     });
 
     res.json({ data: ticketId });

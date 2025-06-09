@@ -39,31 +39,15 @@ export default function Home() {
   const [seatError, setSeatError] = useState<boolean>(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [ticketId, setTicketId] = useState<string>("");
+  const [seated, setSeated] = useState<boolean[]>(Array(20).fill(false));
 
-  const [seated] = useState<boolean[]>([
-    false,
-    false,
-    false,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-    true,
-    true,
-    true,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-    false,
-  ]);
-
-  useEffect(() => {}, []);
+  useEffect(() => {
+    axios
+      .get(`${process.env.BACKEND_URL || "http://localhost:80"}/buyseatleft`)
+      .then((res) => {
+        setSeated(JSON.parse(res.data.data));
+      });
+  }, []);
 
   const Seat = ({ seatNumber }: { seatNumber: number }) => {
     return (
