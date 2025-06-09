@@ -2,6 +2,7 @@ require("dotenv").config();
 const express = require("express");
 const app = express();
 const mysql = require("mysql2/promise");
+const redis = require("redis");
 
 // install cors for cross origin resource sharing to frontend
 const cors = require("cors");
@@ -16,6 +17,7 @@ app.use(
 
 app.use(express.json());
 let conn = null;
+let redisConn = null;
 
 // ------------ init function ------------
 const initMySQL = async () => {
@@ -27,12 +29,18 @@ const initMySQL = async () => {
   });
   console.log(`init connecttion to mySQL success`);
 };
+const initRedis = async () => {
+  redisConn = redis.createClient();
+  redisConn.on("error", (err) => console.log("Redis Client Error", err));
+  await redisConn.connect();
+};
 
 // ------------ START APP ------------
 if (require.main === module) {
   const PORT = process.env.PORT || 80;
   app.listen(PORT, async () => {
     await initMySQL();
+    await initRedis();
     console.log(`Server running on port ${PORT}`);
   });
 }
@@ -44,6 +52,12 @@ module.exports = {
       return res.status(500).json({ error: "Database not connected" });
     }
     return conn;
+  },
+  getRedisConn: () => {
+    if (!redisConn) {
+      return res.status(500).json({ error: "Database not connected" });
+    }
+    return redisConn;
   },
 };
 

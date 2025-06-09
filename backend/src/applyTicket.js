@@ -1,29 +1,18 @@
 const express = require("express");
 const router = express.Router();
-const { getConn } = require("./app");
-const { v4: uuidv4 } = require("uuid");
+const { getConn, getRedisConn } = require("./app");
+const { v4: uuidv4, stringify } = require("uuid");
 
 module.exports = router;
-
-// buy : select seat & zone -> the zone is mark (15 minute) -> user go to payment page -> buy that ticket
-// remember in both redis & apply ticket
-// FREE : select FREE plan -> answer the question -> new item in FREE_TICKETS_APPLY, wait for admin to grant
-
-// redis has 15 minutes reserve, 10 minute for user to buy in frontend & 5 for backup
-
-// TICKETS
-// {ticketId, type (FREE, BUY), seat}
-// FREE ticket need to be answer & wait for admin to grant
-// PATD ticket can be buy directly ! assume there a payment gateway right away
-
-// TRANSACTION
-// {transactionId, datetime, paymentReferenceId, payment}
 
 // -------------- BUY TICKET ---------------
 router.post("/buy", async (req, res) => {
   try {
-    // redisTODO (no need to implement now): add seatReserve for buy
+    // redis : quickly mark seatReserve
+    // redis has 15 minutes reserve to complete payment -> if not
+
     const conn = await getConn();
+    const redisConn = await getRedisConn();
 
     const { customer, seatNumber } = req.body;
     if (
@@ -35,10 +24,30 @@ router.post("/buy", async (req, res) => {
     )
       throw new Error("Missing required field");
 
-    // check seat number ---------
+    // check seat number pattern ---------
     const match = seatNumber.match(/^B(\d{2})$/);
     if (!match || match[1] < "01" || match[1] > "20")
       throw new Error("Invalid Seat Number");
+
+    // REDIS : check if seat number avaliable with redis -----
+    let cacheBuySeat = await redisConn.get("cacheBuySeat"); // bit string "00100..10" length 20 represent B01..B20
+    if (!cacheBuySeat || cacheBuySeat) {
+      let seatBitMap = Array(20).fill(false);
+
+      const buySeatRes = await conn.query(
+        "SELECT seat FROM TICKETS WHERE zone = 'BUY'"
+      );
+      buySeatRes[0].map((item) => {
+        const index = parseInt(item.seat.replace("B", ""));
+        seatBitMap[index - 1] = true;
+      });
+      // redis only accept text -> make it stringify
+      cacheBuySeat = JSON.stringify(seatBitMap);
+      redisConn.set("cacheBuySeat", cacheBuySeat);
+    }
+    const buySeat = JSON.parse(cacheBuySeat);
+    if (buySeat[parseInt(seatNumber.replace("B", "")) - 1])
+      throw new Error("this Seat Number already booked");
 
     // get new Id --------
     const { ticketUUID, ticketId, customerId } = await getNewId(
@@ -85,6 +94,7 @@ router.post("/buy", async (req, res) => {
 router.post("/free", async (req, res) => {
   try {
     // redisTODO (no need to implement now): create new reserveId, then remember the questions
+    // does it really need to be done
     const conn = await getConn();
     const { customer, questions } = req.body;
 
