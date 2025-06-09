@@ -110,12 +110,12 @@ router.post("/free", async (req, res) => {
       throw new Error("Missing required field");
 
     // get new Id --------
-    const { ticketUUID, ticketId, customerId } = await getNewId(
+    let { ticketUUID, ticketId, customerId } = await getNewId(
       customer.customerSecurityNumber
     );
 
     // INSERT DATA TO DB ----------
-    if (customerId.includes("INDB"))
+    if (!customerId.includes("INDB"))
       await conn.query(
         "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender,customerSecurityNumber) VALUES (?, ?, ?, ?,?)",
         [
@@ -126,6 +126,7 @@ router.post("/free", async (req, res) => {
           customer.customerSecurityNumber,
         ]
       );
+    else customerId = customerId.replace("INDB_", "");
     await conn.query(
       "INSERT INTO TICKETS (ticketUUID,ticketId,zone,seat,status,customerId,updateTime) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [ticketUUID, ticketId, "FREE", "F00", "PROCESS", customerId, new Date()]

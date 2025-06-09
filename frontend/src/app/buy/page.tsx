@@ -36,7 +36,7 @@ const ticketIdPopup = ({ ticketId }: { ticketId: string }) => {
 
 export default function Home() {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
-  const [seatError, setSeatError] = useState<boolean>(false);
+  const [seatError, setSeatError] = useState<string>("");
   const [showPopup, setShowPopup] = useState<boolean>(false);
   const [ticketId, setTicketId] = useState<string>("");
   const [seated, setSeated] = useState<boolean[]>(Array(20).fill(false));
@@ -78,10 +78,9 @@ export default function Home() {
 
   const onSubmit = async (data: FormData) => {
     if (!selectedSeat) {
-      setSeatError(true);
+      setSeatError("please select seat");
       return;
     }
-    setSeatError(false);
 
     const customer = {
       customerName: data.customerName,
@@ -102,9 +101,13 @@ export default function Home() {
         .then((response) => {
           setTicketId(response.data.data);
           setShowPopup(true);
+        })
+        .catch((error) => {
+          throw new Error(error.response.data.error);
         });
-    } catch {
-      console.error("Error completing payment:");
+      setSeatError("");
+    } catch (error: unknown) {
+      setSeatError(error instanceof Error ? error.message : "error");
     }
   };
 
@@ -125,11 +128,8 @@ export default function Home() {
               <Seat key={i} seatNumber={i + 1} />
             ))}
           </div>
-          {seatError && (
-            <p className="mt-1 p-2 text-sm text-red-600">
-              please select a seat
-            </p>
-          )}
+
+          <p className="mt-1 p-2 text-sm text-red-600">{seatError}</p>
         </div>
         <div>
           <label className="block text-sm font-medium text-gray-700">

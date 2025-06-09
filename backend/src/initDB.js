@@ -76,8 +76,14 @@ router.post("/mockdata", async (req, res) => {
     // Insert customers
     for (const c of mockdata.customers) {
       await conn.query(
-        "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender) VALUES (?, ?, ?, ?)",
-        [c.customerId, c.customerName, c.customerAge, c.customerGender]
+        "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender, customerSecurityNumber) VALUES (?, ?, ?, ?)",
+        [
+          c.customerId,
+          c.customerName,
+          c.customerAge,
+          c.customerGender,
+          c.customerSecurityNumber,
+        ]
       );
     }
     // Insert tickets
