@@ -9,7 +9,7 @@ module.exports = router;
 router.post("/buy", async (req, res) => {
   try {
     // redis : quickly mark seatReserve
-    // redis has 15 minutes reserve to complete payment -> if not we must mark ticket.status to FAIL
+    // redis has 5 minutes reserve to complete payment -> if not we must mark ticket.status to FAIL
 
     const conn = await getConn();
     const redisConn = await getRedisConn();
@@ -92,7 +92,7 @@ router.post("/buy", async (req, res) => {
 
     await redisConn.set(`reservation:${ticketUUID}`, "PROCESS", {
       // DEV check
-      EX: 10, // lifetime = 15 minutes in seconds
+      EX: 10, // lifetime = 5 minutes in seconds
     });
 
     res.json({ data: ticketId });
