@@ -41,8 +41,10 @@ const getNewId = async (
 
     if (lastCustomer.length > 0) {
       const lastNum =
-        parseInt(lastCustomer[0].customerId.replace("INDB", "")) || 0;
+        parseInt(lastCustomer[0].customerId.replace("CUS", "")) || 0;
       newCustomerId = "CUS" + String(lastNum + 1).padStart(5, "0");
+    } else {
+      newCustomerId = "CUS00001";
     }
   }
 
