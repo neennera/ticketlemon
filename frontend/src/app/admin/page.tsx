@@ -43,8 +43,12 @@ export default function Home() {
     try {
       const url =
         status === "ALL"
-          ? `http://localhost:80/admin/tickets?page=${page}&limit=10`
-          : `http://localhost:80/admin/tickets/status/${status}?page=${page}&limit=10`;
+          ? `${
+              process.env.BACKEND_URL || "http://localhost:80"
+            }/admin/tickets?page=${page}&limit=10`
+          : `${
+              process.env.BACKEND_URL || "http://localhost:80"
+            }/admin/tickets/status/${status}?page=${page}&limit=10`;
 
       const response = await axios.get(url);
 
@@ -71,7 +75,9 @@ export default function Home() {
   const handleViewAnswers = async (ticketId: string) => {
     try {
       const response = await axios.get(
-        `http://localhost:80/admin/ticket/${ticketId}`
+        `${
+          process.env.BACKEND_URL || "http://localhost:80"
+        }/admin/ticket/${ticketId}`
       );
       setSelectedTicket(response.data.data[0]);
       setIsModalOpen(true);
@@ -85,10 +91,13 @@ export default function Home() {
     newStatus: "SUCCESS" | "FAIL"
   ) => {
     try {
-      await axios.patch(`http://localhost:80/updateTicket/free`, {
-        ticketUUID: ticketUUID,
-        status: newStatus,
-      });
+      await axios.patch(
+        `${process.env.BACKEND_URL || "http://localhost:80"}/updateTicket/free`,
+        {
+          ticketUUID: ticketUUID,
+          status: newStatus,
+        }
+      );
       setIsModalOpen(false);
       fetchTickets(currentPage, selectedStatus);
     } catch (error) {

@@ -4,6 +4,8 @@ import Header from "@/app/components/Header";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import axios from "axios";
+import { useState } from "react";
 
 const formSchema = z.object({
   customerName: z.string().min(3, "Name must be at least 3 characters"),
@@ -27,14 +29,34 @@ const formSchema = z.object({
   Q3: z
     .string()
     .min(
-      20,
+      10,
       "Please share your story related to the band with length more than 10 characters"
     ),
 });
 
 type FormData = z.infer<typeof formSchema>;
 
+const ticketIdPopup = ({ ticketId }: { ticketId: string }) => {
+  return (
+    <div className="fixed  flex-col space-y-5 top-0 left-0 w-full h-full bg-black/92 bg-opacity-50 flex items-center justify-center">
+      <p className="text-4xl text-white">Your Ticker ID is</p>
+      <p className="text-4xl font-bold text-white my-10">{ticketId}</p>
+      <p className="text-xl text-white">
+        please <strong className="text-yellow-500">copy & remember</strong> this
+        number to check your status
+      </p>
+
+      <a href="/payment" className="bg-yellow-500 py-2 px-8 mt-3">
+        Go To Check Status Page
+      </a>
+    </div>
+  );
+};
+
 export default function Home() {
+  const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [ticketId, setTicketId] = useState<string>("");
+
   const {
     register,
     handleSubmit,
@@ -43,7 +65,7 @@ export default function Home() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     const customer = {
       customerName: data.customerName,
       customerAge: data.customerAge,
@@ -55,14 +77,33 @@ export default function Home() {
       Q2: data.Q2,
       Q3: data.Q3,
     };
-    console.log(customer);
-    console.log(questions);
+    try {
+      await axios
+        .post(
+          `${
+            process.env.BACKEND_URL || "http://localhost:80"
+          }/applyTicket/free`,
+          {
+            customer,
+            questions,
+          }
+        )
+        .then((response) => {
+          setTicketId(response.data.data);
+          setShowPopup(true);
+        });
+      setShowPopup(true);
+    } catch {
+      console.error("Error completing payment:");
+    }
     // use Axios to send data to backend
   };
 
   return (
     <div className="w-full relative bg-gray-200 flex flex-col items-center justify-items-center min-h-screen px-8 pb-20 py-20 sm:px-20 font-[family-name:var(--font-geist-sans)]">
       <Header />
+      {showPopup && ticketIdPopup({ ticketId })}
+
       <div className="text-4xl font-bold">Apply Free ticket🍋</div>
 
       <form

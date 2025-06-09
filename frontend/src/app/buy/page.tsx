@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
+import axios from "axios";
 
 const formSchema = z.object({
   customerName: z.string().min(3, "Name must be at least 3 characters"),
@@ -37,6 +38,8 @@ export default function Home() {
   const [selectedSeat, setSelectedSeat] = useState<number | null>(null);
   const [seatError, setSeatError] = useState<boolean>(false);
   const [showPopup, setShowPopup] = useState<boolean>(false);
+  const [ticketId, setTicketId] = useState<string>("");
+
   const [seated] = useState<boolean[]>([
     false,
     false,
@@ -73,7 +76,7 @@ export default function Home() {
             : "bg-gray-300"
         } rounded-full`}
       >
-        B{seatNumber}
+        {`B${seatNumber}`}
       </button>
     );
   };
@@ -87,7 +90,7 @@ export default function Home() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     if (!selectedSeat) {
       setSeatError(true);
       return;
@@ -101,15 +104,29 @@ export default function Home() {
       customerSecurityNumber: data.customerSecurityNumber,
     };
 
-    console.log(customer);
-    // use Axios to send data to backend
+    try {
+      await axios
+        .post(
+          `${process.env.BACKEND_URL || "http://localhost:80"}/applyTicket/buy`,
+          {
+            customer,
+            seatNumber: "B" + String(selectedSeat).padStart(2, "0"),
+          }
+        )
+        .then((response) => {
+          setTicketId(response.data.data);
+          setShowPopup(true);
+        });
+    } catch {
+      console.error("Error completing payment:");
+    }
     setShowPopup(true);
   };
 
   return (
     <div className="w-full space-y-10 relative bg-gray-200 flex flex-col items-center justify-items-center min-h-screen px-8 pb-20 py-30 sm:px-20 font-[family-name:var(--font-geist-sans)]">
       <Header />
-      {showPopup && ticketIdPopup({ ticketId: "1234567890" })}
+      {showPopup && ticketIdPopup({ ticketId })}
       <div className="text-4xl font-bold">Buy the ticket🍋</div>
 
       <form
@@ -119,26 +136,9 @@ export default function Home() {
         <div className="w-full flex flex-col items-center justify-items-center">
           <p>please select only ONE seat</p>
           <div className="grid gap-2 grid-cols-5 my-5">
-            <Seat seatNumber={1} />
-            <Seat seatNumber={2} />
-            <Seat seatNumber={3} />
-            <Seat seatNumber={4} />
-            <Seat seatNumber={5} />
-            <Seat seatNumber={6} />
-            <Seat seatNumber={7} />
-            <Seat seatNumber={8} />
-            <Seat seatNumber={9} />
-            <Seat seatNumber={10} />
-            <Seat seatNumber={11} />
-            <Seat seatNumber={12} />
-            <Seat seatNumber={13} />
-            <Seat seatNumber={14} />
-            <Seat seatNumber={15} />
-            <Seat seatNumber={16} />
-            <Seat seatNumber={17} />
-            <Seat seatNumber={18} />
-            <Seat seatNumber={19} />
-            <Seat seatNumber={20} />
+            {[...Array(20)].map((_, i) => (
+              <Seat key={i} seatNumber={i + 1} />
+            ))}
           </div>
           {seatError && (
             <p className="mt-1 p-2 text-sm text-red-600">

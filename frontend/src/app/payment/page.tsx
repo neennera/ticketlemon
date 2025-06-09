@@ -5,9 +5,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
 import Link from "next/link";
 import { useState } from "react";
+import axios from "axios";
 
 const formSchema = z.object({
-  ticketID: z.string().min(8, "ticketID must be 8 characters"),
+  ticketID: z.string().length(7, "ticketID must be 7 characters"),
   paymentPlatform: z.enum(["QRCODE", "DIRECT", "PAYPLAT"]),
   paymentReference: z
     .string()
@@ -38,16 +39,26 @@ export default function Home() {
     resolver: zodResolver(formSchema),
   });
 
-  const onSubmit = (data: FormData) => {
+  const onSubmit = async (data: FormData) => {
     const bodyData = {
       ticketID: data.ticketID,
       paymentPlatform: data.paymentPlatform,
       paymentReference: data.paymentReference,
     };
 
-    console.log(bodyData);
     // use Axios to send data to backend
-    setShowPopup(true);
+    try {
+      await axios
+        .patch(
+          `${
+            process.env.BACKEND_URL || "http://localhost:80"
+          }/updateTicket/buy`,
+          bodyData
+        )
+        .then(() => setShowPopup(true));
+    } catch {
+      console.error("Error completing payment:");
+    }
   };
 
   return (
@@ -65,7 +76,7 @@ export default function Home() {
             TicketId
           </label>
           <input
-            {...register("ticketID")}
+            {...(register("ticketID") || "")}
             className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
             type="text"
           />

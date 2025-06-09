@@ -9,8 +9,8 @@ module.exports = router;
 router.patch("/buy", async (req, res) => {
   try {
     const conn = await getConn();
-    const { ticketUUID, paymentPlatform, paymentReference } = req.body;
-    if (!paymentPlatform || !paymentReference || !ticketUUID)
+    const { ticketID, paymentPlatform, paymentReference } = req.body;
+    if (!paymentPlatform || !paymentReference || !ticketID)
       throw new Error("Missing required field");
 
     // check paymentPlatform ----
@@ -19,12 +19,14 @@ router.patch("/buy", async (req, res) => {
 
     // nextTODO : check payment from something? -> on test should be correct 80%, 20%. I dunno?
 
-    // check ticketUUID ---------
+    // check ticketID ---------
     const resQuery = await conn.query(
-      "SELECT * FROM TICKETS WHERE ticketUUID = ? AND zone = 'BUY'",
-      [ticketUUID]
+      "SELECT * FROM TICKETS WHERE ticketID = ? AND zone = 'BUY'",
+      [ticketID]
     );
-    if (resQuery[0].length == 0) throw new Error("Invalid ticketUUID");
+    if (resQuery[0].length == 0) throw new Error("Invalid ticketID");
+
+    const ticketUUID = await resQuery[0][0].ticketUUID;
 
     await conn.query(
       "UPDATE TICKETS_APPLY_BUY SET paymentPlatform = ?, paymentReference = ? WHERE ticketUUID = ? ",
