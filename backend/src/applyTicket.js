@@ -81,8 +81,7 @@ router.post("/buy", async (req, res) => {
     redisConn.set("cacheBuySeat", cacheBuySeat);
 
     await redisConn.set(`reservation:${ticketUUID}`, "PROCESS", {
-      // DEV check
-      EX: 60, // lifetime = 5 minutes in seconds
+      EX: 300, // lifetime = 5 minutes in seconds
     });
 
     res.json({ data: ticketId });
