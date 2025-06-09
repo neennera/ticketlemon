@@ -57,8 +57,6 @@ router.get("/tickets/status/:status", async (req, res) => {
 
     res.json({ data: result[0] });
   } catch (error) {
-    console.log(error);
-
     res.status(500).json({ error: error.message });
   }
 });

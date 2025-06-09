@@ -35,8 +35,6 @@ router.post("/buy", async (req, res) => {
     )
       throw new Error("Missing required field");
 
-    console.log(seatNumber);
-
     // check seat number ---------
     const match = seatNumber.match(/^B(\d{2})$/);
     if (!match || match[1] < "01" || match[1] > "20")

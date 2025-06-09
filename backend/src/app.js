@@ -75,7 +75,6 @@ app.get("/ticket/:ticketId", async (req, res) => {
       "SELECT * FROM TICKETS WHERE TICKETS.ticketId = ?",
       [ticketId]
     );
-    console.log(result1);
 
     if (!result1) throw new Error("result is not defined");
     if (result1[0][0].zone === "FREE") {
