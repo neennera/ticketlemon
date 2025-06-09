@@ -37,23 +37,27 @@ router.post("/buy", async (req, res) => {
       throw new Error("this Seat Number already booked");
 
     // get new Id --------
-    const { ticketUUID, ticketId, customerId } = await getNewId(
+    let { ticketUUID, ticketId, customerId } = await getNewId(
       customer.customerSecurityNumber,
       false,
       seatNumber
     );
 
     // INSERT DATA TO DB ----------
-    await conn.query(
-      "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender,customerSecurityNumber) VALUES (?, ?, ?, ?,?)",
-      [
-        customerId,
-        customer.customerName,
-        customer.customerAge,
-        customer.customerGender,
-        customer.customerSecurityNumber,
-      ]
-    );
+
+    if (!customerId.includes("INDB"))
+      await conn.query(
+        "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender,customerSecurityNumber) VALUES (?, ?, ?, ?,?)",
+        [
+          customerId,
+          customer.customerName,
+          customer.customerAge,
+          customer.customerGender,
+          customer.customerSecurityNumber,
+        ]
+      );
+    else customerId = customerId.replace("INDB_", "");
+
     await conn.query(
       "INSERT INTO TICKETS (ticketUUID,ticketId,zone,seat,status,customerId,updateTime) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [
@@ -112,16 +116,17 @@ router.post("/free", async (req, res) => {
     );
 
     // INSERT DATA TO DB ----------
-    await conn.query(
-      "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender,customerSecurityNumber) VALUES (?, ?, ?, ?,?)",
-      [
-        customerId,
-        customer.customerName,
-        customer.customerAge,
-        customer.customerGender,
-        customer.customerSecurityNumber,
-      ]
-    );
+    if (customerId.includes("INDB"))
+      await conn.query(
+        "INSERT INTO CUSTOMERS (customerId, customerName, customerAge, customerGender,customerSecurityNumber) VALUES (?, ?, ?, ?,?)",
+        [
+          customerId,
+          customer.customerName,
+          customer.customerAge,
+          customer.customerGender,
+          customer.customerSecurityNumber,
+        ]
+      );
     await conn.query(
       "INSERT INTO TICKETS (ticketUUID,ticketId,zone,seat,status,customerId,updateTime) VALUES (?, ?, ?, ?, ?, ?, ?)",
       [ticketUUID, ticketId, "FREE", "F00", "PROCESS", customerId, new Date()]

@@ -7,12 +7,14 @@ const getNewId = async (
   seatNumber = ""
 ) => {
   const conn = await getConn();
+  let newCustomerId = "INDB"; // mark if this customer already in system
 
   // Check Duplicate Seat (Again within DB for secure) -----------
   if (!isFree) {
-    const [DupSeat] = await conn.query("SELECT * FROM TICKETS WHERE seat = ?", [
-      [seatNumber],
-    ]);
+    const [DupSeat] = await conn.query(
+      "SELECT * FROM TICKETS WHERE status != 'FAIL' AND seat = ?",
+      [[seatNumber]]
+    );
     if (DupSeat.length > 0) throw new Error("Duplicate seatNumber");
   }
 
@@ -22,18 +24,26 @@ const getNewId = async (
     [customerSecurityNumber]
   );
 
-  if (DupCustomer.length > 0)
-    throw new Error("Duplicate customerSecurityNumber");
+  if (DupCustomer.length > 0) {
+    const [CustomerHasTicket] = await conn.query(
+      "SELECT * FROM TICKETS WHERE customerId = ? AND status != 'FAIL'",
+      [[DupCustomer[0].customerId]]
+    );
+    if (CustomerHasTicket.length > 0)
+      throw new Error("customer already has ticket in system");
+    newCustomerId = "INDB_" + DupCustomer[0].customerId;
+  } else {
+    // new customer
+    // Generate new customerId (CUSxxx) -----------
+    const [lastCustomer] = await conn.query(
+      "SELECT customerId FROM CUSTOMERS ORDER BY customerId DESC LIMIT 1"
+    );
 
-  // Generate new customerId (CUSxxx) -----------
-  const [lastCustomer] = await conn.query(
-    "SELECT customerId FROM CUSTOMERS ORDER BY customerId DESC LIMIT 1"
-  );
-  let newCustomerId = "CUS001";
-  if (lastCustomer.length > 0) {
-    const lastNum =
-      parseInt(lastCustomer[0].customerId.replace("CUS", "")) || 0;
-    newCustomerId = "CUS" + String(lastNum + 1).padStart(5, "0");
+    if (lastCustomer.length > 0) {
+      const lastNum =
+        parseInt(lastCustomer[0].customerId.replace("INDB", "")) || 0;
+      newCustomerId = "CUS" + String(lastNum + 1).padStart(5, "0");
+    }
   }
 
   // Generate new ticketId (TFxxx) -----------
