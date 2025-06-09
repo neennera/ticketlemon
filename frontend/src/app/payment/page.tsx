@@ -76,7 +76,7 @@ export default function Home() {
             TicketId
           </label>
           <input
-            {...(register("ticketID") || "")}
+            {...register("ticketID")}
             className="mt-1 p-2 block w-full rounded-md border-gray-300 shadow-sm focus:border-yellow-500 focus:ring-yellow-500"
             type="text"
           />

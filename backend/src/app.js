@@ -76,7 +76,8 @@ app.get("/ticket/:ticketId", async (req, res) => {
       [ticketId]
     );
 
-    if (!result1) throw new Error("result is not defined");
+    if (!result1 || !Array.isArray(result1[0]) || result1[0].length === 0)
+      throw new Error("result is not defined");
     if (result1[0][0].zone === "FREE") {
       const result = await conn.query(
         "SELECT * FROM TICKETS JOIN TICKETS_APPLY_FREE ON TICKETS.ticketUUID = TICKETS_APPLY_FREE.ticketUUID WHERE TICKETS.ticketId = ?",

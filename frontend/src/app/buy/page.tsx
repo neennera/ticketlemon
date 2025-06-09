@@ -18,7 +18,7 @@ const formSchema = z.object({
 const ticketIdPopup = ({ ticketId }: { ticketId: string }) => {
   return (
     <div className="fixed  flex-col space-y-5 top-0 left-0 w-full h-full bg-black/92 bg-opacity-50 flex items-center justify-center">
-      <p className="text-4xl text-white">Your Ticker ID is</p>
+      <p className="text-4xl text-white">Your Tikter ID is</p>
       <p className="text-4xl font-bold text-white my-10">{ticketId}</p>
       <p className="text-xl text-white">
         please <strong className="text-yellow-500">copy & remember</strong> this
@@ -120,7 +120,6 @@ export default function Home() {
     } catch {
       console.error("Error completing payment:");
     }
-    setShowPopup(true);
   };
 
   return (
