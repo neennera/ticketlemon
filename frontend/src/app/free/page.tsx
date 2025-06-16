@@ -1,6 +1,4 @@
 "use client";
-
-import Header from "@/app/components/Header";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -103,15 +101,15 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full relative bg-gray-200 flex flex-col items-center justify-items-center min-h-screen px-8 pb-20 py-20 sm:px-20 font-[family-name:var(--font-geist-sans)]">
-      <Header />
+    <div className="flex w-140 items-center  flex-col justify-center ">
       {showPopup && ticketIdPopup({ ticketId })}
-
-      <div className="text-4xl font-bold">Apply Free ticket🍋</div>
+      <div className="text-4xl font-bold max-w-2xl w-full text-center text-white">
+        Apply Free ticket🍋
+      </div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-2xl mt-8 space-y-6 bg-white p-8 rounded-lg shadow-xl"
+        className="w-full max-w-2xl mt-8 space-y-6 bg-white/95 border border-white p-8 rounded-lg shadow-xl"
       >
         <div>
           <label className="block text-sm font-medium text-gray-700">

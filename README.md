@@ -19,7 +19,7 @@ TicketLemon is a comprehensive ticket booking system that allows users to purcha
 
 - **Frontend**: Next.js, React, TypeScript
 - **Backend**: Express.js, Node.js
-- **Database**: MySQL
+- **Database**: MySQL (connect by mysql connection in mysql2/promise lib, write SQL command)
 - **Caching & Real-time**: Redis
 - **Containerization**: Docker, Docker Compose
 
@@ -31,7 +31,7 @@ Redis is used for several critical features:
 
    - Seats are represented as a bitmap in Redis (`backend\src\lib\getCacheBuySeat.js`)
    - Prevents double-booking by providing atomic operations
-   - Improves performance by avoiding frequent database queries
+   - Improves performance by avoiding frequent database queries (In theory, when sacling websit you should use redis in popular concert's avaliable seat)
 
 2. **Reservation Timeout**:
 
@@ -57,9 +57,9 @@ The Express backend is structured around modular routes:
 
 2. **Middleware Usage**:
 
-   - CORS configuration for frontend communication
-   - JSON body parsing
-   - Error handling middleware
+   - CORS configuration for frontend communication, since back/front is in different domain
+   - JSON body parsing & Error handling middleware
+   - Authentication (in future)
 
 3. **Database Connectivity**:
    - Connection pooling with MySQL
