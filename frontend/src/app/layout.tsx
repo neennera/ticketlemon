@@ -27,7 +27,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased relative animation-pulse w-screen min-h-screen space-y-10  flex flex-col items-center justify-items-center px-8 py-20 sm:px-20
+        className={`${geistSans.variable} ${geistMono.variable} antialiased relative animation-pulse w-screen min-h-screen space-y-10  flex flex-col items-center justify-items-center px-8 py-35 sm:py-20 sm:px-20
           bg-gradient-to-b from-yellow-600  to-zinc-200 bg-400% animate-gradient`}
       >
         <Header />
