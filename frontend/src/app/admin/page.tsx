@@ -1,6 +1,4 @@
 "use client";
-
-import Header from "@/app/components/Header";
 import { useEffect, useState } from "react";
 import axios from "axios";
 
@@ -106,12 +104,11 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full space-y-10 relative bg-gray-200 flex flex-col items-center justify-items-center min-h-screen px-8 pb-20 py-30 sm:px-20 font-[family-name:var(--font-geist-sans)]">
-      <Header />
-      <div className="text-4xl font-bold">Admin Page</div>
+    <div className="flex w-260 space-y-10 items-center  flex-col justify-center ">
+      <div className="text-4xl font-bold text-white">Admin Page</div>
 
       {/* Ticket List Section */}
-      <div className="w-full max-w-6xl bg-white p-8 rounded-lg shadow-xl">
+      <div className="w-full max-w-6xl bg-white/95 border border-white p-8 rounded-lg shadow-xl">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold">Ticket Applications</h2>
           <div className="space-x-2">

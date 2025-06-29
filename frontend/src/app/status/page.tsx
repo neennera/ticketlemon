@@ -1,7 +1,6 @@
 "use client";
 import { useState, FormEvent } from "react";
 import axios from "axios";
-import Header from "@/app/components/Header";
 
 interface Ticket {
   ticketUUID: string;
@@ -42,14 +41,13 @@ export default function TicketStatusPage() {
   };
 
   return (
-    <div className="w-full space-y-10 flex items-center justify-center flex-col bg-gray-200 min-h-screen px-8 pb-20 py-30 sm:px-20">
-      <Header />
-      <div className="text-4xl font-bold text-center">
+    <div className="flex w-140 items-center  flex-col justify-center space-y-10 ">
+      <div className="text-4xl font-bold text-center text-white">
         Check Your Ticket Status 🍋
       </div>
       <form
         onSubmit={handleSubmit}
-        className="space-y-4 relative bg-white p-6 max-w-[70%] rounded-lg shadow-md"
+        className="space-y-4 relative bg-white/95 border border-white p-6 w-full max-w-2xl rounded-lg shadow-md"
       >
         <label htmlFor="ticketId" className="block text-lg font-medium">
           Ticket ID:

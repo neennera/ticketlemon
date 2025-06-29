@@ -22,7 +22,7 @@ let redisConn = null;
 // ------------ init function ------------
 const initMySQL = async () => {
   conn = await mysql.createConnection({
-    host: process.env.DBhost || "localhost",
+    host: process.env.DBhost || "localhost:80",
     user: process.env.DBuser || "root",
     password: process.env.DBpassword || "root",
     database: process.env.DBname || "ticketlemon",

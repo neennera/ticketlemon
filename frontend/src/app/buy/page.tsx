@@ -1,5 +1,4 @@
 "use client";
-import Header from "@/app/components/Header";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -112,14 +111,13 @@ export default function Home() {
   };
 
   return (
-    <div className="w-full space-y-10 relative bg-gray-200 flex flex-col items-center justify-items-center min-h-screen px-8 pb-20 py-30 sm:px-20 font-[family-name:var(--font-geist-sans)]">
-      <Header />
+    <div className="flex w-140 items-center  flex-col justify-center ">
       {showPopup && ticketIdPopup({ ticketId })}
-      <div className="text-4xl font-bold">Buy the ticket🍋</div>
+      <div className="text-4xl font-bold text-white">Buy the ticket🍋</div>
 
       <form
         onSubmit={handleSubmit(onSubmit)}
-        className="w-full max-w-2xl mt-8 space-y-6 bg-white p-8 rounded-lg shadow-xl"
+        className="max-w-2xl w-full mt-8 space-y-6 bg-white/95 border border-white p-8 rounded-lg shadow-xl"
       >
         <div className="w-full flex flex-col items-center justify-items-center">
           <p>please select only ONE seat</p>
