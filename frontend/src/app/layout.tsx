@@ -26,7 +26,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[url(/theatre-bg.webp)] bg-cover animation-pulse w-screen h-screen space-y-10 relative flex flex-col items-center justify-items-center px-8 pb-20 py-30 sm:px-20`}
+        className={`${geistSans.variable} ${geistMono.variable} antialiased animation-pulse w-screen min-h-screen space-y-10  flex flex-col items-center justify-items-center px-8 pb-20 py-30 sm:px-20
+          bg-gradient-to-b from-yellow-700 via-yellow-400 to-zinc-200 bg-400% animate-gradient`}
       >
         <Header />
         {children}

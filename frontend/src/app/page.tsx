@@ -16,7 +16,7 @@ export default function Home() {
   const [selectedShow, setSelectedShow] = useState<CircusShow | null>(null);
 
   return (
-    <main className="min-h-screen bg-red-50">
+    <main className="min-h-screen ">
       {/* Hero Section */}
       <section className="relative h-screen flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
