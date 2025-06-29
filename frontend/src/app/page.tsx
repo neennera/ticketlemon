@@ -16,25 +16,14 @@ export default function Home() {
   const [selectedShow, setSelectedShow] = useState<CircusShow | null>(null);
 
   return (
-    <main className="min-h-screen ">
+    <main className="bg-white/80 shadow-2xl rounded-4xl">
       {/* Hero Section */}
-      <section className="relative h-screen flex items-center justify-center overflow-hidden">
-        <div className="absolute inset-0 z-0">
-          <Image
-            src="/images/circus-tent.jpg"
-            alt="Circus Tent Background"
-            fill
-            style={{ objectFit: "cover" }}
-            priority
-          />
-          <div className="absolute inset-0 bg-black opacity-50"></div>
-        </div>
-
+      <section className="relative h-[80vh] flex items-center justify-center overflow-hidden rounded-2xl">
         <div className="z-10 text-center px-4">
-          <h1 className="text-5xl md:text-7xl font-extrabold text-yellow-400 mb-6 font-circus">
-            TicketLemon
+          <h1 className="text-5xl md:text-7xl font-extrabold text-yellow-800 mb-6 font-circus">
+            TicketLemon 🍋
           </h1>
-          <p className="text-white text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
+          <p className="text-black text-xl md:text-2xl mb-12 max-w-3xl mx-auto">
             Step right up to the greatest show on Earth! Secure your seats to
             witness spectacular performances, death-defying stunts, and magical
             moments.
@@ -65,7 +54,7 @@ export default function Home() {
         <div className="absolute bottom-10 left-0 right-0 flex justify-center">
           <div className="animate-bounce">
             <svg
-              className="w-10 h-10 text-white"
+              className="w-10 h-10 text-black"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -83,7 +72,7 @@ export default function Home() {
       </section>
 
       {/* Ongoing Shows Section */}
-      <section className="py-16 px-4 bg-red-100">
+      <section className="py-16 px-4 ">
         <div className="max-w-7xl mx-auto">
           <h2 className="text-4xl font-bold text-center mb-12 text-red-800">
             <span className="inline-block transform -rotate-2 bg-yellow-400 px-4 py-2">
@@ -93,9 +82,10 @@ export default function Home() {
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {circusShows.map((show) => (
-              <div
+              <button
+                onClick={() => setSelectedShow(show)}
                 key={show.id}
-                className="bg-white rounded-lg overflow-hidden shadow-lg transform transition-all hover:-translate-y-2 hover:shadow-xl"
+                className="bg-white cursor-pointer rounded-lg overflow-hidden shadow-lg transform transition-all hover:-translate-y-2 hover:shadow-xl"
               >
                 <div className="relative h-64">
                   <Image
@@ -109,27 +99,15 @@ export default function Home() {
                   <h3 className="text-2xl font-bold text-red-800 mb-2">
                     {show.showName}
                   </h3>
-                  <button
-                    onClick={() => setSelectedShow(show)}
-                    className="mt-4 px-6 py-2 bg-yellow-400 hover:bg-yellow-500 text-red-900 font-bold rounded-full text-sm transition-all"
-                  >
+                  <div className="mt-4 px-6 py-2 bg-yellow-400 hover:bg-yellow-500 text-red-900 font-bold rounded-full text-sm transition-all">
                     See More
-                  </button>
+                  </div>
                 </div>
-              </div>
+              </button>
             ))}
           </div>
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="bg-red-900 text-white py-8">
-        <div className="max-w-7xl mx-auto px-4 text-center">
-          <p>
-            © 2023 TicketLemon Circus. All rights under the big top reserved!
-          </p>
-        </div>
-      </footer>
 
       {/* Modal for Show Details */}
       {selectedShow && (
@@ -144,7 +122,7 @@ export default function Home() {
               />
               <button
                 onClick={() => setSelectedShow(null)}
-                className="absolute top-4 right-4 bg-red-600 text-white w-10 h-10 rounded-full flex items-center justify-center"
+                className="absolute top-4 right-4 bg-red-600 text-black w-10 h-10 rounded-full flex items-center justify-center"
               >
                 ✕
               </button>
