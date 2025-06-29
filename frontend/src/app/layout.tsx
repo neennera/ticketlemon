@@ -28,11 +28,21 @@ export default function RootLayout({
     <html lang="en">
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased relative animation-pulse w-screen min-h-screen space-y-10  flex flex-col items-center justify-items-center px-8 py-20 sm:px-20
-          bg-gradient-to-b from-yellow-700 via-yellow-400 to-zinc-200 bg-400% animate-gradient`}
+          bg-gradient-to-b from-yellow-600  to-zinc-200 bg-400% animate-gradient`}
       >
         <Header />
         {children}
         <Footer />
+        <div className="w-screen h-screen -z-20 fixed inset-0 ">
+          <p className="text-5xl absolute top-20 left-15 animate-pulse">🤹‍♂️</p>
+          <p className="text-5xl absolute bottom-35 left-45 animate-pulse">
+            🎪
+          </p>
+          <p className="text-5xl absolute top-20 right-15 animate-pulse">🤹‍♀️</p>
+          <p className="text-5xl absolute bottom-30 right-45 animate-pulse">
+            🎪
+          </p>
+        </div>
       </body>
     </html>
   );
