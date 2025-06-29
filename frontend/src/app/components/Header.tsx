@@ -1,22 +1,45 @@
+import Link from "next/link";
+
 export default function Header() {
   return (
-    <header className="w-full flex justify-center space-x-5  absolute top-0 left-0 right-0 bg-yellow-50">
-      <a href="/buy" className="py-2 px-10 font-bold hover:bg-yellow-500">
+    <header className="w-full flex justify-center space-x-5 py-2 fixed backdrop-blur-sm top-0 left-0 right-0 bg-yellow-500/30">
+      <Link
+        href="/"
+        className="py-2 px-10 font-bold absolute left-3 text-xl  hover:text-yellow-800"
+      >
+        TICKETLEMON
+      </Link>
+      <Link
+        href="/buy"
+        className="py-2 px-10 font-bold hover:bg-yellow-500 rounded-sm"
+      >
         buy ticket
-      </a>
+      </Link>
 
-      <a href="/free" className="py-2 px-10 font-bold hover:bg-yellow-500">
+      <Link
+        href="/free"
+        className="py-2 px-10 font-bold hover:bg-yellow-500 rounded-sm"
+      >
         free ticket
-      </a>
-      <a href="/payment" className="py-2 px-10 font-bold hover:bg-yellow-500">
+      </Link>
+      <Link
+        href="/payment"
+        className="py-2 px-10 font-bold hover:bg-yellow-500 rounded-sm"
+      >
         payment
-      </a>
-      <a href="/status" className="py-2 px-10 font-bold hover:bg-yellow-500">
+      </Link>
+      <Link
+        href="/status"
+        className="py-2 px-10 font-bold hover:bg-yellow-500 rounded-sm"
+      >
         check status
-      </a>
-      <a href="/admin" className="py-2 px-10 font-bold hover:bg-yellow-500">
-        admin
-      </a>
+      </Link>
+      <Link
+        href="/admin"
+        className="absolute right-3 py-2 px-10  italic text-yellow-700 hover:text-yellow-900"
+      >
+        for admin
+      </Link>
     </header>
   );
 }
