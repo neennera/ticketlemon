@@ -1,5 +1,7 @@
 # TicketLemon Project 🍋
 
+read a medium : [Manage Caching with Redis in concert ticket website](https://neennera.medium.com/manage-caching-with-redis-in-concert-ticket-website-b8a4b277a31b)
+
 A full-stack web application for concert ticket management with real-time seat reservation.
 
 A learning project for redis, node.js, express !
